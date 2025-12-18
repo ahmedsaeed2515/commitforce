@@ -12,7 +12,7 @@ export interface IChallenge extends Document {
   coverImage?: string;
   
   // Goal Details
-  goalType: 'numeric' | '  boolean' | 'milestone';
+  goalType: 'numeric' | 'boolean' | 'milestone';
   targetValue?: number;
   currentValue: number;
   unit?: string;
@@ -87,6 +87,31 @@ export interface IChallenge extends Document {
   allowComments: boolean;
   likes: mongoose.Types.ObjectId[];
   views: number;
+  
+  // Group Challenge Fields 🔥
+  challengeType: 'solo' | 'duel' | 'group';
+  maxParticipants?: number; // For group challenges
+  participants?: {
+    user: mongoose.Types.ObjectId;
+    joinedAt: Date;
+    status: 'invited' | 'joined' | 'declined' | 'eliminated';
+    deposit: {
+      amount: number;
+      paid: boolean;
+      paidAt?: Date;
+    };
+    performance: {
+      completedCheckIns: number;
+      missedCheckIns: number;
+      rank?: number;
+    };
+  }[];
+  prizePool?: {
+    total: number;
+    distribution: 'winner_takes_all' | 'top_performers' | 'equal_split';
+    winners?: mongoose.Types.ObjectId[];
+    distributed: boolean;
+  };
   
   // Analytics
   engagementRate: number;
@@ -250,6 +275,44 @@ const challengeSchema = new Schema<IChallenge>({
   likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   views: { type: Number, default: 0 },
   
+  // Group Challenge Fields 🔥
+  challengeType: {
+    type: String,
+    enum: ['solo', 'duel', 'group'],
+    default: 'solo',
+    index: true
+  },
+  maxParticipants: { type: Number, min: 2, max: 100 },
+  participants: [{
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    joinedAt: { type: Date, default: Date.now },
+    status: {
+      type: String,
+      enum: ['invited', 'joined', 'declined', 'eliminated'],
+      default: 'invited'
+    },
+    deposit: {
+      amount: { type: Number, required: true },
+      paid: { type: Boolean, default: false },
+      paidAt: Date
+    },
+    performance: {
+      completedCheckIns: { type: Number, default: 0 },
+      missedCheckIns: { type: Number, default: 0 },
+      rank: Number
+    }
+  }],
+  prizePool: {
+    total: { type: Number, default: 0 },
+    distribution: {
+      type: String,
+      enum: ['winner_takes_all', 'top_performers', 'equal_split'],
+      default: 'winner_takes_all'
+    },
+    winners: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    distributed: { type: Boolean, default: false }
+  },
+  
   // Analytics
   engagementRate: { type: Number, default: 0 },
   completionProbability: { type: Number, default: 50 }
@@ -285,14 +348,12 @@ challengeSchema.virtual('completionPercentage').get(function() {
 });
 
 // Calculate progress percentage before saving
-challengeSchema.pre('save', function(next) {
+challengeSchema.pre('save', function() {
   // Calculate duration if not set
   if (this.startDate && this.endDate && !this.isModified('duration')) {
     const diffTime = Math.abs(this.endDate.getTime() - this.startDate.getTime());
     this.duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
-  
-  next();
 });
 
 export default mongoose.model<IChallenge>('Challenge', challengeSchema);

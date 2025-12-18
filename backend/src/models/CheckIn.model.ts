@@ -20,6 +20,7 @@ export interface ICheckIn extends Document {
   };
   
   // Status
+  status?: 'pending' | 'approved' | 'rejected';
   verified: boolean;
   verifiedBy?: mongoose.Types.ObjectId;
   verifiedAt?: Date;
@@ -79,6 +80,11 @@ const checkInSchema = new Schema<ICheckIn>({
     custom: Schema.Types.Mixed
   },
   
+  status: { 
+    type: String, 
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
   verified: { type: Boolean, default: false },
   verifiedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   verifiedAt: Date,

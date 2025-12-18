@@ -12,6 +12,7 @@ interface EnvConfig {
   JWT_REFRESH_SECRET: string;
   JWT_ACCESS_EXPIRY: string;
   JWT_REFRESH_EXPIRY: string;
+  JWT_SECRET: string; // Alias for JWT_ACCESS_SECRET
   
   SMTP_HOST?: string;
   SMTP_PORT?: number;
@@ -49,6 +50,7 @@ const config: EnvConfig = {
   JWT_REFRESH_SECRET: getEnvVar('JWT_REFRESH_SECRET', 'dev_refresh_secret_change_in_production'),
   JWT_ACCESS_EXPIRY: getEnvVar('JWT_ACCESS_EXPIRY', '15m'),
   JWT_REFRESH_EXPIRY: getEnvVar('JWT_REFRESH_EXPIRY', '7d'),
+  JWT_SECRET: getEnvVar('JWT_ACCESS_SECRET', 'dev_access_secret_change_in_production'), // Alias
   
   SMTP_HOST: getEnvVar('SMTP_HOST'),
   SMTP_PORT: parseInt(getEnvVar('SMTP_PORT', '587'), 10),

@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - DATABASE_URL=mongodb://mongo:27017/commitforce
+      - JWT_SECRET=change_me_in_prod
+      - FRONTEND_URL=http://localhost:3000
+    depends_on:
+      - mongo
+    networks:
+      - commitforce-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+    depends_on:
+      - backend
+    networks:
+      - commitforce-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - commitforce-network
+
+networks:
+  commitforce-network:
+    driver: bridge
+
+volumes:
+  mongo-data:

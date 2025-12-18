@@ -17,6 +17,10 @@ export interface IUser extends Document {
   successRate: number;
   
   // Financial
+  balance: {
+    amount: number;
+    currency: string;
+  };
   totalDeposited: number;
   totalEarned: number;
   totalDonated: number;
@@ -25,6 +29,22 @@ export interface IUser extends Document {
   followers: mongoose.Types.ObjectId[];
   following: mongoose.Types.ObjectId[];
   badges: mongoose.Types.ObjectId[];
+  
+  // Gamification 🎮
+  streak: {
+    current: number;
+    longest: number;
+    lastCheckIn: Date;
+    freezesAvailable: number;
+    freezesUsed: number;
+  };
+  points: number;
+  level: number;
+  achievements: {
+    badge: mongoose.Types.ObjectId;
+    earnedAt: Date;
+    progress?: number;
+  }[];
   
   // Settings
   notificationSettings: {
@@ -106,6 +126,10 @@ const userSchema = new Schema<IUser>({
   successRate: { type: Number, default: 0 },
   
   // Financial
+  balance: {
+    amount: { type: Number, default: 0 },
+    currency: { type: String, default: 'USD' }
+  },
   totalDeposited: { type: Number, default: 0 },
   totalEarned: { type: Number, default: 0 },
   totalDonated: { type: Number, default: 0 },
@@ -114,6 +138,22 @@ const userSchema = new Schema<IUser>({
   followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   badges: [{ type: Schema.Types.ObjectId, ref: 'Badge' }],
+  
+  // Gamification 🎮
+  streak: {
+    current: { type: Number, default: 0 },
+    longest: { type: Number, default: 0 },
+    lastCheckIn: Date,
+    freezesAvailable: { type: Number, default: 0 },
+    freezesUsed: { type: Number, default: 0 }
+  },
+  points: { type: Number, default: 0 },
+  level: { type: Number, default: 1 },
+  achievements: [{
+    badge: { type: Schema.Types.ObjectId, ref: 'Badge' },
+    earnedAt: { type: Date, default: Date.now },
+    progress: Number
+  }],
   
   // Settings
   notificationSettings: {
