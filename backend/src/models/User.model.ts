@@ -187,9 +187,7 @@ const userSchema = new Schema<IUser>({
   toObject: { virtuals: true }
 });
 
-// Indexes for performance
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+// Indexes for performance (avoid duplicating unique field indexes)
 userSchema.index({ createdAt: -1 });
 userSchema.index({ successRate: -1 });
 userSchema.index({ totalChallenges: -1 });
@@ -214,12 +212,12 @@ userSchema.methods.comparePassword = async function(candidatePassword: string): 
 
 // Virtual for follower count
 userSchema.virtual('followerCount').get(function() {
-  return this.followers.length;
+  return this.followers?.length ?? 0;
 });
 
 // Virtual for following count
 userSchema.virtual('followingCount').get(function() {
-  return this.following.length;
+  return this.following?.length ?? 0;
 });
 
 export default mongoose.model<IUser>('User', userSchema);

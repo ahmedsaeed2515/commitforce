@@ -35,7 +35,7 @@ export default function BadgeNotificationListener() {
 
             // Show rewards if any
             if (data.rewards) {
-                const rewardText = [];
+                const rewardText: string[] = [];
                 if (data.rewards.points) rewardText.push(`+${data.rewards.points} points`);
                 if (data.rewards.freezeTokens) rewardText.push(`+${data.rewards.freezeTokens} freeze tokens`);
                 

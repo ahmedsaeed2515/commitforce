@@ -15,6 +15,9 @@ export const createChallenge = async (userId: string, data: any) => {
     throw ApiError.badRequest('End date must be after start date');
   }
 
+  // Calculate duration in days
+  const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
   // Check if user has active challenges limit (e.g. 5)
   const activeChallenges = await Challenge.countDocuments({
     user: userId,
@@ -24,12 +27,41 @@ export const createChallenge = async (userId: string, data: any) => {
   if (activeChallenges >= 5) {
     throw ApiError.badRequest('You cannot have more than 5 active challenges');
   }
+
+  // Calculate required check-ins based on frequency
+  const checkInFrequency = data.checkInFrequency || 'daily';
+  let requiredCheckIns = data.requiredCheckIns;
+  if (!requiredCheckIns) {
+    switch (checkInFrequency) {
+      case 'daily':
+        requiredCheckIns = duration;
+        break;
+      case 'weekly':
+        requiredCheckIns = Math.ceil(duration / 7);
+        break;
+      case 'biweekly':
+        requiredCheckIns = Math.ceil(duration / 14);
+        break;
+      default:
+        requiredCheckIns = duration;
+    }
+  }
+
+  // Set default deposit & reward if not provided
+  const deposit = data.deposit || { amount: 0, currency: 'EGP', paid: false };
+  const reward = data.reward || { amount: 0, type: 'percentage', paid: false };
   
   // Create challenge
   const challenge = await Challenge.create({
     ...data,
     user: userId,
-    status: data.deposit?.paid ? 'active' : 'draft' // Simplified status logic
+    duration,
+    requiredCheckIns,
+    checkInFrequency,
+    deposit,
+    reward,
+    goalType: data.goalType || 'boolean',
+    status: deposit.paid ? 'active' : 'draft'
   });
   
   // Update user stats

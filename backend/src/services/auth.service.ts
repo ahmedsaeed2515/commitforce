@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import User from '../models/User.model';
 import ApiError from '../utils/ApiError';
 import config from '../config/env';
+import emailService from './email.service';
 
 /**
  * Generate JWT Tokens
@@ -152,7 +153,16 @@ export const forgotPassword = async (email: string) => {
   user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
   await user.save();
 
-  return { resetToken };
+  // Send password reset email
+  try {
+    await emailService.sendPasswordResetEmail(email, user.fullName, resetToken);
+    console.log(`Password reset email sent to ${email}`);
+  } catch (error) {
+    console.error('Failed to send password reset email:', error);
+    // Don't throw - the token is still valid
+  }
+
+  return { resetToken, message: 'Password reset email sent' };
 };
 
 /**

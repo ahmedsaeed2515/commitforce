@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { challengeApi } from '@/lib/api/challenge.api';
 import ImageUpload from './ImageUpload';
+import { X, CheckCircle, Camera, MessageSquare } from 'lucide-react';
 
 interface CheckInModalProps {
   challengeId: string;
@@ -21,16 +22,17 @@ interface CheckInData {
 
 export default function CheckInModal({ challengeId, isOpen, onClose, onSuccess }: CheckInModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, control, formState: { errors } } = useForm<CheckInData>();
+  const { register, handleSubmit, control } = useForm<CheckInData>();
 
   const onSubmit = async (data: CheckInData) => {
     try {
       setIsLoading(true);
       await challengeApi.checkIn(challengeId, data);
-      toast.success('Checked in successfully! 🎉');
+      toast.success('Checked in successfully!');
       onSuccess();
       onClose();
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
       toast.error(err.response?.data?.message || 'Failed to check in');
     } finally {
       setIsLoading(false);
@@ -41,63 +43,87 @@ export default function CheckInModal({ challengeId, isOpen, onClose, onSuccess }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onClick={onClose}></div>
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" aria-hidden="true" onClick={onClose}></div>
 
-        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div className="relative bg-[#0a0a1a] border border-white/10 rounded-2xl max-w-lg w-full shadow-2xl">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white" id="modal-title">
+                Daily Check-in
+              </h3>
+            </div>
+            <button 
+              onClick={onClose}
+              className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition text-white/50 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" />
+                How did it go?
+              </label>
+              <textarea
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                rows={3}
+                placeholder="Share your progress..."
+                {...register('note')}
+              />
+            </div>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-              Daily Check-in
-            </h3>
-            
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">How did it go?</label>
-                <textarea
-                  className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                  rows={3}
-                  placeholder="Share your progress..."
-                  {...register('note')}
+            <div>
+              <label className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                <Camera className="w-4 h-4" />
+                Proof Image (Optional)
+              </label>
+              <div className="mt-1">
+                <Controller
+                  control={control}
+                  name="image"
+                  render={({ field: { onChange, value } }) => (
+                    <ImageUpload 
+                      onChange={onChange} 
+                      value={value as File} 
+                      label="Upload Proof"
+                    />
+                  )}
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Proof Image (Optional)</label>
-                <div className="mt-1">
-                   <Controller
-                    control={control}
-                    name="image"
-                    render={({ field: { onChange, value } }) => (
-                      <ImageUpload 
-                        onChange={onChange} 
-                        value={value as File} 
-                        label="Upload Proof"
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm disabled:opacity-50"
-                >
-                  {isLoading ? 'Checking in...' : 'Check In'}
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-3 border border-white/10 rounded-xl font-medium text-white/70 hover:bg-white/5 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 bg-linear-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-400 hover:to-purple-500 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <CheckCircle className="w-5 h-5" />
+                    Check In
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

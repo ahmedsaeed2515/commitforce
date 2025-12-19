@@ -1,5 +1,7 @@
 import apiClient from './client';
 
+import { User } from '../store/authStore';
+
 export interface RegisterData {
   email: string;
   password: string;
@@ -16,7 +18,7 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   data: {
-    user: any;
+    user: User;
     accessToken: string;
     refreshToken: string;
   };
@@ -76,4 +78,15 @@ export const resetPassword = async (token: string, password: string) => {
 export const verifyEmail = async (token: string) => {
   const response = await apiClient.get(`/auth/verify-email/${token}`);
   return response.data;
+};
+
+// Auth API object for easier imports
+export const authApi = {
+  register,
+  login,
+  getMe,
+  logout,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
 };

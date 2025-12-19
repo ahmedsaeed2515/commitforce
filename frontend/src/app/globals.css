@@ -1,26 +1,1085 @@
 @import "tailwindcss";
 
+/* ============================================
+   🎨 CommitForce 3D Design System
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Colors */
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #6366f1;
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-800: #3730a3;
+  --primary-900: #312e81;
+
+  /* Background & Foreground */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.8);
+
+  /* 3D Shadows */
+  --shadow-3d: 0 10px 40px -10px rgba(0, 0, 0, 0.15),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-3d-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-3d-inset: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-blur: 20px;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --gradient-warning: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  --gradient-mesh: radial-gradient(
+      at 40% 20%,
+      hsla(240, 100%, 70%, 0.2) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.2) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(45, 100%, 70%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.2) 0px, transparent 50%);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
+/* ============================================
+   🌙 Dark Mode (supports both media query and .dark class)
+   ============================================ */
+
+/* Dark mode via system preference */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --background: #0a0a1a;
+    --foreground: #e2e8f0;
+    --card-bg: rgba(20, 20, 50, 0.9);
+    --glass-bg: rgba(20, 20, 50, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --shadow-3d: 0 10px 40px -10px rgba(0, 0, 0, 0.6),
+      0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    --shadow-3d-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+      0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --gradient-mesh: radial-gradient(
+        at 40% 20%,
+        hsla(240, 100%, 40%, 0.15) 0px,
+        transparent 50%
+      ),
+      radial-gradient(at 80% 0%, hsla(280, 100%, 30%, 0.12) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(320, 100%, 30%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsla(200, 100%, 30%, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(260, 100%, 30%, 0.12) 0px, transparent 50%);
   }
+}
+
+/* Dark mode via .dark class (manual toggle) */
+html.dark {
+  --background: #0a0a1a;
+  --foreground: #e2e8f0;
+  --card-bg: rgba(20, 20, 50, 0.9);
+  --glass-bg: rgba(20, 20, 50, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-3d: 0 10px 40px -10px rgba(0, 0, 0, 0.6),
+    0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-3d-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  --gradient-mesh: radial-gradient(
+      at 40% 20%,
+      hsla(240, 100%, 40%, 0.15) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 80% 0%, hsla(280, 100%, 30%, 0.12) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(320, 100%, 30%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(200, 100%, 30%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(260, 100%, 30%, 0.12) 0px, transparent 50%);
+}
+
+/* Dark mode text colors */
+.dark .text-gray-900 { color: #f1f5f9 !important; }
+.dark .text-gray-800 { color: #e2e8f0 !important; }
+.dark .text-gray-700 { color: #cbd5e1 !important; }
+.dark .text-gray-600 { color: #94a3b8 !important; }
+.dark .text-gray-500 { color: #64748b !important; }
+.dark .text-gray-400 { color: #475569 !important; }
+
+/* Dark mode backgrounds */
+.dark .bg-white { background-color: rgba(20, 20, 50, 0.9) !important; }
+.dark .bg-gray-50 { background-color: rgba(30, 30, 60, 0.8) !important; }
+.dark .bg-gray-100 { background-color: rgba(40, 40, 70, 0.8) !important; }
+
+/* Dark mode borders */
+.dark .border-gray-100 { border-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .border-gray-200 { border-color: rgba(255, 255, 255, 0.08) !important; }
+.dark .border-gray-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+
+/* Dark mode input fields */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: rgba(30, 30, 60, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* ============================================
+   🌐 Base Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
+  background-image: var(--gradient-mesh);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   🎴 3D Card System
+   ============================================ */
+
+.card-3d {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-3d);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card-3d:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: var(--shadow-3d-hover);
+}
+
+.card-3d-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ============================================
+   ✨ 3D Button System
+   ============================================ */
+
+.btn-3d {
+  position: relative;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 0 #4338ca, 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+.btn-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #4338ca, 0 15px 30px rgba(99, 102, 241, 0.4);
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #4338ca, 0 5px 10px rgba(99, 102, 241, 0.2);
+}
+
+.btn-3d::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.btn-3d:hover::before {
+  left: 100%;
+}
+
+.btn-3d-success {
+  background: var(--gradient-success);
+  box-shadow: 0 6px 0 #0d756d, 0 10px 20px rgba(17, 153, 142, 0.3);
+}
+
+.btn-3d-success:hover {
+  box-shadow: 0 8px 0 #0d756d, 0 15px 30px rgba(17, 153, 142, 0.4);
+}
+
+/* ============================================
+   🏷️ 3D Badge System
+   ============================================ */
+
+.badge-3d {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-3d);
+  transition: all 0.3s ease;
+}
+
+.badge-3d:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.badge-3d-primary {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.2),
+    rgba(139, 92, 246, 0.2)
+  );
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #6366f1;
+}
+
+.badge-3d-success {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.2),
+    rgba(52, 211, 153, 0.2)
+  );
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.badge-3d-warning {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.2),
+    rgba(251, 191, 36, 0.2)
+  );
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+}
+
+/* ============================================
+   📊 3D Progress Bar
+   ============================================ */
+
+.progress-3d {
+  position: relative;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+  box-shadow: var(--shadow-3d-inset);
+}
+
+.progress-3d-bar {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 100px;
+  transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-3d-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ============================================
+   🎭 3D Input Fields
+   ============================================ */
+
+.input-3d {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--foreground);
+  box-shadow: var(--shadow-3d-inset), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.input-3d:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: var(--shadow-3d-inset), 0 0 0 4px rgba(99, 102, 241, 0.15),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.input-3d::placeholder {
+  color: rgba(107, 114, 128, 0.6);
+}
+
+/* ============================================
+   🧊 Glassmorphism Navbar
+   ============================================ */
+
+.navbar-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   🌊 3D Floating Elements
+   ============================================ */
+
+.floating-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.floating-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  top: -100px;
+  right: -100px;
+  animation: orb-float-1 20s ease-in-out infinite;
+}
+
+.floating-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  bottom: -50px;
+  left: -50px;
+  animation: orb-float-2 15s ease-in-out infinite;
+}
+
+.floating-orb-3 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  top: 50%;
+  left: 50%;
+  animation: orb-float-3 18s ease-in-out infinite;
+}
+
+@keyframes orb-float-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, 50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.9);
+  }
+}
+
+@keyframes orb-float-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-40px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(20px, -50px) scale(0.95);
+  }
+}
+
+@keyframes orb-float-3 {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* ============================================
+   🎪 3D Stat Cards
+   ============================================ */
+
+.stat-card-3d {
+  position: relative;
+  padding: 24px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.stat-card-3d::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+.stat-card-3d:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-3d-hover);
+}
+
+/* ============================================
+   🎨 3D Avatar
+   ============================================ */
+
+.avatar-3d {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 0 0 4px var(--glass-bg),
+    0 0 0 6px var(--primary-500);
+  transition: all 0.3s ease;
+}
+
+.avatar-3d:hover {
+  transform: scale(1.1) translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 0 0 4px var(--glass-bg),
+    0 0 0 6px var(--primary-400);
+}
+
+/* ============================================
+   ⚡ Micro-Animations
+   ============================================ */
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   🏆 Leaderboard Podium 3D
+   ============================================ */
+
+.podium-3d {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  perspective: 1000px;
+}
+
+.podium-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px 20px 0 0;
+  transform-style: preserve-3d;
+  transition: all 0.4s ease;
+}
+
+.podium-place:hover {
+  transform: translateY(-10px) rotateX(5deg);
+}
+
+.podium-1st {
+  min-height: 200px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.2),
+    rgba(255, 193, 7, 0.1)
+  );
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.podium-2nd {
+  min-height: 160px;
+  background: linear-gradient(
+    135deg,
+    rgba(192, 192, 192, 0.2),
+    rgba(158, 158, 158, 0.1)
+  );
+  border-color: rgba(192, 192, 192, 0.3);
+}
+
+.podium-3rd {
+  min-height: 120px;
+  background: linear-gradient(
+    135deg,
+    rgba(205, 127, 50, 0.2),
+    rgba(176, 141, 87, 0.1)
+  );
+  border-color: rgba(205, 127, 50, 0.3);
+}
+
+/* ============================================
+   🎯 Utility Classes
+   ============================================ */
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gradient {
+  border: 2px solid transparent;
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+    var(--gradient-primary) border-box;
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-3d);
+}
+
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   📱 Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .card-3d:hover {
+    transform: none;
+  }
+
+  .floating-orb {
+    opacity: 0.3;
+  }
+
+  .podium-3d {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .podium-place {
+    width: 100%;
+    min-height: auto !important;
+    border-radius: 20px;
+  }
+}
+
+/* ============================================
+   ✨ Shimmer Animation (for loading skeletons)
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ============================================
+   🎭 Additional Animations
+   ============================================ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1s ease-in-out infinite;
+}
+
+/* ============================================
+   🎨 Empty State Styling
+   ============================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.empty-state-icon {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  display: block;
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty-state-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-description {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   🔔 Notification Badge
+   ============================================ */
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+  animation: scale-in 0.3s ease-out;
+}
+
+/* ============================================
+   🎯 Focus Styles
+   ============================================ */
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   📝 Form Error States
+   ============================================ */
+
+.input-error {
+  border-color: #ef4444 !important;
+  animation: shake 0.5s ease-in-out;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ============================================
+   ✅ Success States
+   ============================================ */
+
+.input-success {
+  border-color: #10b981 !important;
+}
+
+.input-success:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+.success-message {
+  color: #10b981;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ============================================
+   💳 Payment Page Animations
+   ============================================ */
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 10s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+@keyframes bounce-in-payment {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    transform: scale(1.1) translateY(0);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in-payment 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Payment success checkmark animation */
+@keyframes checkmark-draw {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.checkmark-path {
+  stroke-dasharray: 100;
+  animation: checkmark-draw 0.8s ease-out forwards;
+}
+
+/* Gradient animation for buttons */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Pulse animation for security badges */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Loading spinner for payment */
+@keyframes spin-smooth {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-smooth {
+  animation: spin-smooth 1s linear infinite;
+}
+
+/* ============================================
+   🎨 Payment Card Hover Effects
+   ============================================ */
+
+.payment-card-hover {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.payment-card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.3);
+}
+
+/* ============================================
+   🔒 Security Badge Glow
+   ============================================ */
+
+@keyframes security-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.security-badge-glow {
+  animation: security-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   ✨ Confetti Animation (for success)
+   ============================================ */
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--primary-500);
+  animation: confetti-fall 3s linear forwards;
 }

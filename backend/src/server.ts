@@ -1,96 +1,79 @@
-// CommitForce Server
-import express, { Application, Request, Response } from 'express';
-import { createServer } from 'http';
+import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { createServer } from 'http';
 import connectDB from './config/database';
 import config from './config/env';
-import errorHandler from './middleware/error.middleware';
-import { initCronJobs } from './services/cron.service';
-import { initializeDefaultBadges } from './services/gamification.service';
 import { initializeSocket } from './config/socket';
+import errorHandler from './middleware/error.middleware';
 
-// Import routes
+// Routes imports
 import authRoutes from './routes/auth.routes';
 import challengeRoutes from './routes/challenge.routes';
-import verificationRoutes from './routes/verification.routes';
-import paymentRoutes from './routes/payment.routes';
+// checkInRoutes is nested in challengeRoutes
+import clubRoutes from './routes/club.routes';
+import commentRoutes from './routes/comment.routes';
+import dailyQuestRoutes from './routes/dailyQuest.routes';
 import feedRoutes from './routes/feed.routes';
-import leaderboardRoutes from './routes/leaderboard.routes';
-import userRoutes from './routes/user.routes';
-import notificationRoutes from './routes/notification.routes';
-import groupChallengeRoutes from './routes/groupChallenge.routes';
 import gamificationRoutes from './routes/gamification.routes';
+import groupChallengeRoutes from './routes/groupChallenge.routes';
+import leaderboardRoutes from './routes/leaderboard.routes';
+import notificationRoutes from './routes/notification.routes';
+import paymentRoutes from './routes/payment.routes';
+import userRoutes from './routes/user.routes';
+import verificationRoutes from './routes/verification.routes';
+import pushRoutes from './routes/push.routes';
 
-// Connect to Database
+const app = express();
+const httpServer = createServer(app);
+
+// Connect Database
 connectDB();
 
-const app: Application = express();
-const httpServer = createServer(app);
-const API_VERSION = '/api/v1';
-
-// Initialize WebSocket
-try {
-    initializeSocket(httpServer);
-} catch (error) {
-    console.warn('⚠️ WebSocket initialization failed (socket.io not installed)');
-}
-
 // Middleware
-app.use(helmet());
-app.use(cors({
-  origin: config.FRONTEND_URL,
-  credentials: true
+app.use(cors({ 
+    origin: config.FRONTEND_URL, 
+    credentials: true 
 }));
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use(`${API_VERSION}/auth`, authRoutes);
-app.use(`${API_VERSION}/challenges`, challengeRoutes);
-app.use(`${API_VERSION}/verification`, verificationRoutes);
-app.use(`${API_VERSION}/payments`, paymentRoutes);
-app.use(`${API_VERSION}/feed`, feedRoutes);
-app.use(`${API_VERSION}/leaderboard`, leaderboardRoutes);
-app.use(`${API_VERSION}/users`, userRoutes);
-app.use(`${API_VERSION}/notifications`, notificationRoutes);
-app.use(`${API_VERSION}/challenges`, groupChallengeRoutes);
-app.use(`${API_VERSION}/gamification`, gamificationRoutes);
+// Socket.IO
+initializeSocket(httpServer);
 
-// Health check
-app.get('/health', (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date() });
+// Routes Mounting
+app.use('/api/v1/auth', authRoutes);
+
+// Challenge Routes (Order matters: Group routes before generic challenge routes)
+app.use('/api/v1/challenges', groupChallengeRoutes);
+app.use('/api/v1/challenges', challengeRoutes);
+
+app.use('/api/v1/clubs', clubRoutes);
+app.use('/api/v1/comments', commentRoutes);
+app.use('/api/v1/daily-quests', dailyQuestRoutes);
+app.use('/api/v1/feed', feedRoutes);
+app.use('/api/v1/gamification', gamificationRoutes);
+app.use('/api/v1/leaderboard', leaderboardRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/verifications', verificationRoutes);
+app.use('/api/v1/push', pushRoutes);
+
+// Health Check
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date() });
 });
 
-// 404 handler
-app.use((_req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
-  });
+app.get('/', (req, res) => {
+    res.send('CommitForce API is running');
 });
 
-// Error handler (must be last)
+// Error Handler
 app.use(errorHandler);
 
-// Start server
-const PORT = config.PORT || 5000;
-
-// Initialize Cron Jobs
-initCronJobs();
-
-// Initialize Default Badges
-initializeDefaultBadges();
-
-httpServer.listen(PORT, () => {
-  console.log('');
-  console.log('🚀 ========================================');
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`✅ Environment: ${config.NODE_ENV}`);
-  console.log(`✅ Frontend URL: ${config.FRONTEND_URL}`);
-  console.log(`🔌 WebSocket: Enabled`);
-  console.log('🚀 ========================================');
-  console.log('');
+// Start Server
+httpServer.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`);
 });
-
-export default app;

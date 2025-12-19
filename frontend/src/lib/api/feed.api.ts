@@ -5,4 +5,10 @@ export const feedApi = {
     const response = await apiClient.get(`/feed?page=${page}&limit=${limit}`);
     return response.data;
   },
+
+  likeCheckIn: async (checkInId: string) => {
+    const response = await apiClient.post(`/feed/${checkInId}/like`);
+    return response.data;
+  },
 };
+

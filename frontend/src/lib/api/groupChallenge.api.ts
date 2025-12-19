@@ -1,7 +1,14 @@
 import apiClient from './client';
+import { CreateChallengeData } from './challenge.api';
+
+export interface CreateGroupChallengeData extends Omit<CreateChallengeData, 'goalType'> {
+  goalType?: string;
+  challengeType: 'group' | 'duel';
+  requiredCheckIns?: number;
+}
 
 export const groupChallengeApi = {
-    create: async (challengeData: any, invitedUserIds: string[]) => {
+    create: async (challengeData: CreateGroupChallengeData, invitedUserIds: string[]) => {
         const response = await apiClient.post('/challenges/group', {
             ...challengeData,
             invitedUsers: invitedUserIds

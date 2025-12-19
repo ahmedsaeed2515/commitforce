@@ -5,6 +5,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 import apiClient from '@/lib/api/client';
 import FreezePurchaseModal from './FreezePurchaseModal';
 import toast from 'react-hot-toast';
+import { Flame, Star, Snowflake, Plus, Rocket } from 'lucide-react';
 
 interface StreakStats {
     streak?: {
@@ -63,25 +64,36 @@ export default function StreakWidget() {
 
     return (
         <>
-            <div className="bg-linear-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white shadow-lg">
+            <div className="bg-linear-to-br from-orange-500/20 to-red-500/20 backdrop-blur-sm border border-orange-500/20 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div>
-                        <div className="text-sm opacity-90">Current Streak</div>
-                        <div className="text-5xl font-black">{stats.streak?.current || 0}</div>
-                        <div className="text-sm opacity-75">days 🔥</div>
+                        <div className="text-sm text-white/70">Current Streak</div>
+                        <div className="text-5xl font-black text-white">{stats.streak?.current || 0}</div>
+                        <div className="text-sm text-white/50 flex items-center gap-1">
+                            days <Flame className="w-4 h-4 text-orange-400" />
+                        </div>
                     </div>
-                    <div className="text-6xl">🔥</div>
+                    <div className="w-16 h-16 rounded-2xl bg-orange-500/20 flex items-center justify-center">
+                        <Flame className="w-10 h-10 text-orange-400" />
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
                     <div>
-                        <div className="text-xs opacity-75">Longest</div>
-                        <div className="text-2xl font-bold">{stats.streak?.longest || 0}</div>
+                        <div className="text-xs text-white/50 flex items-center gap-1">
+                            <Star className="w-3 h-3" />
+                            Longest
+                        </div>
+                        <div className="text-2xl font-bold text-white">{stats.streak?.longest || 0}</div>
                     </div>
                     <div>
-                        <div className="text-xs opacity-75">Freezes</div>
-                        <div className="text-2xl font-bold">
-                            🧊 {stats.streak?.freezesAvailable || 0}
+                        <div className="text-xs text-white/50 flex items-center gap-1">
+                            <Snowflake className="w-3 h-3" />
+                            Freezes
+                        </div>
+                        <div className="text-2xl font-bold text-white flex items-center gap-1">
+                            <Snowflake className="w-5 h-5 text-blue-400" />
+                            {stats.streak?.freezesAvailable || 0}
                         </div>
                     </div>
                 </div>
@@ -91,23 +103,26 @@ export default function StreakWidget() {
                     {streakInDanger() && stats.streak && stats.streak.freezesAvailable > 0 && (
                         <button
                             onClick={handleUseFreeze}
-                            className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm py-2 px-4 rounded-lg font-bold transition"
+                            className="w-full bg-blue-500/20 border border-blue-500/30 hover:bg-blue-500/30 backdrop-blur-sm py-2.5 px-4 rounded-xl font-bold transition text-blue-400 flex items-center justify-center gap-2"
                         >
-                            🧊 Use Freeze (Save Streak!)
+                            <Snowflake className="w-5 h-5" />
+                            Use Freeze (Save Streak!)
                         </button>
                     )}
                     
                     <button
                         onClick={() => setShowPurchaseModal(true)}
-                        className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm py-2 px-4 rounded-lg font-medium transition text-sm"
+                        className="w-full bg-white/10 hover:bg-white/15 backdrop-blur-sm py-2.5 px-4 rounded-xl font-medium transition text-sm text-white/70 flex items-center justify-center gap-2"
                     >
-                        + Buy More Freezes
+                        <Plus className="w-4 h-4" />
+                        Buy More Freezes
                     </button>
                 </div>
 
                 {stats.streak && stats.streak.current >= 3 && (
-                    <div className="mt-4 bg-white/20 rounded-lg p-3 text-center text-sm">
-                        <span className="font-bold">Keep it up!</span> You&apos;re on fire! 🚀
+                    <div className="mt-4 bg-white/10 rounded-xl p-3 text-center text-sm text-white/70 flex items-center justify-center gap-2">
+                        <Rocket className="w-4 h-4 text-indigo-400" />
+                        <span><span className="font-bold text-white">Keep it up!</span> You&apos;re on fire!</span>
                     </div>
                 )}
             </div>

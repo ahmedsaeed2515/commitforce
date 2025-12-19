@@ -1,6 +1,11 @@
 import apiClient from './client';
 
 export const notificationApi = {
+  getAll: async () => {
+    const response = await apiClient.get('/notifications');
+    return response.data;
+  },
+
   getNotifications: async () => {
     const response = await apiClient.get('/notifications');
     return response.data;

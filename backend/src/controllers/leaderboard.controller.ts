@@ -4,21 +4,43 @@ import ApiResponse from '../utils/ApiResponse';
 import User from '../models/User.model';
 
 /**
- * @desc    Get leaderboard
+ * @desc    Get general leaderboard (defaults to points)
  * @route   GET /api/v1/leaderboard
  * @access  Public
  */
 export const getLeaderboard = asyncHandler(async (req: Request, res: Response) => {
-  const limit = parseInt(req.query.limit as string) || 10;
+    const users = await User.find({ isActive: true })
+        .sort({ points: -1 })
+        .limit(10)
+        .select('username fullName avatar points level streak');
+    
+    res.status(200).json(ApiResponse.success('Leaderboard fetched', users));
+});
 
-  // Get top users based on completed challenges or total earned
-  // Let's assume 'score' could be a combination, but for now use 'completedChallenges'
-  const users = await User.find({ role: 'user' })
-    .sort({ completedChallenges: -1, totalEarned: -1 })
-    .limit(limit)
-    .select('fullName username avatar completedChallenges totalEarned successRate');
+/**
+ * @desc    Get streak leaderboard
+ * @route   GET /api/v1/leaderboard/streaks
+ * @access  Public
+ */
+export const getStreakLeaderboard = asyncHandler(async (req: Request, res: Response) => {
+    const users = await User.find({ isActive: true })
+        .sort({ 'streak.current': -1 })
+        .limit(10)
+        .select('username fullName avatar points level streak');
+    
+    res.status(200).json(ApiResponse.success('Streak leaderboard fetched', users));
+});
 
-  res.status(200).json(
-    ApiResponse.success('Leaderboard fetched successfully', users)
-  );
+/**
+ * @desc    Get points leaderboard
+ * @route   GET /api/v1/leaderboard/points
+ * @access  Public
+ */
+export const getPointsLeaderboard = asyncHandler(async (req: Request, res: Response) => {
+    const users = await User.find({ isActive: true })
+        .sort({ points: -1 })
+        .limit(10)
+        .select('username fullName avatar points level streak');
+    
+    res.status(200).json(ApiResponse.success('Points leaderboard fetched', users));
 });

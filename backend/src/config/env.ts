@@ -31,6 +31,11 @@ interface EnvConfig {
   STRIPE_WEBHOOK_SECRET?: string;
   
   REDIS_URL?: string;
+  
+  // VAPID keys for Push Notifications
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_PRIVATE_KEY?: string;
+  VAPID_SUBJECT?: string;
 }
 
 const getEnvVar = (key: string, defaultValue: string = ''): string => {
@@ -69,6 +74,11 @@ const config: EnvConfig = {
   STRIPE_WEBHOOK_SECRET: getEnvVar('STRIPE_WEBHOOK_SECRET'),
   
   REDIS_URL: getEnvVar('REDIS_URL'),
+  
+  // VAPID keys for Push Notifications
+  VAPID_PUBLIC_KEY: getEnvVar('VAPID_PUBLIC_KEY'),
+  VAPID_PRIVATE_KEY: getEnvVar('VAPID_PRIVATE_KEY'),
+  VAPID_SUBJECT: getEnvVar('VAPID_SUBJECT', 'mailto:admin@commitforce.com'),
 };
 
 // Validate critical environment variables

@@ -2,16 +2,18 @@
 
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { UploadCloud, Image as ImageIcon, X } from 'lucide-react';
 
 interface ImageUploadProps {
   onChange: (file: File) => void;
   value?: File | string; // Can be a File object or a URL string
   label?: string;
+  existingImage?: string; // URL of an existing image to display
 }
 
-export default function ImageUpload({ onChange, value, label = 'Upload Image' }: ImageUploadProps) {
+export default function ImageUpload({ onChange, value, label = 'Upload Image', existingImage }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(
-    typeof value === 'string' ? value : null
+    typeof value === 'string' ? value : existingImage || null
   );
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -31,17 +33,28 @@ export default function ImageUpload({ onChange, value, label = 'Upload Image' }:
     multiple: false
   });
 
+  const clearImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPreview(null);
+    // Note: We can't really "clear" the file from the parent without a clear handler, 
+    // but the next upload will overwrite it. 
+    // Ideally, the parent should handle clearing if needed.
+  };
+
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-white/70 mb-2">
         {label}
       </label>
       <div
         {...getRootProps()}
         className={`
-          relative border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 hover:border-gray-400'}
-          ${preview ? 'h-64' : 'h-32'}
+          relative border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all
+          ${isDragActive 
+            ? 'border-indigo-500 bg-indigo-500/10' 
+            : 'border-white/10 hover:border-white/20 hover:bg-white/5'
+          }
+          ${preview ? 'h-64' : 'h-40'}
         `}
       >
         <input {...getInputProps()} />
@@ -51,32 +64,29 @@ export default function ImageUpload({ onChange, value, label = 'Upload Image' }:
             <img 
               src={preview} 
               alt="Preview" 
-              className="w-full h-full object-contain rounded-md" 
+              className="w-full h-full object-contain rounded-lg" 
             />
-            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-md">
-                <p className="text-white font-medium">Click or drop to change</p>
+            <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg gap-2">
+              <UploadCloud className="w-8 h-8 text-white mb-2" />
+              <p className="text-white font-medium text-sm">Click or drop to change</p>
             </div>
+            <button 
+              onClick={clearImage}
+              className="absolute top-2 right-2 p-1 bg-red-500/80 text-white rounded-full hover:bg-red-600 transition z-10"
+              title="Remove image"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         ) : (
           <div className="text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <p className="mt-1 text-sm text-gray-600">
+            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
+              <ImageIcon className="w-6 h-6 text-white/40" />
+            </div>
+            <p className="mt-1 text-sm text-white/70">
               {isDragActive ? 'Drop image here' : 'Click to upload or drag and drop'}
             </p>
-            <p className="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB</p>
+            <p className="text-xs text-white/40 mt-1">PNG, JPG, WEBP up to 5MB</p>
           </div>
         )}
       </div>

@@ -19,6 +19,16 @@ export interface User {
   failedChallenges: number;
   successRate: number;
   
+  // Gamification
+  points?: number;
+  streak?: {
+    current: number;
+    longest: number;
+    lastCheckIn?: string;
+    freezesAvailable: number;
+    freezesUsed: number;
+  };
+  
   // Financial
   totalDeposited: number;
   totalEarned: number;

@@ -6,13 +6,13 @@ import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { challengeApi, CreateChallengeData } from '@/lib/api/challenge.api';
 import ImageUpload from '@/components/ImageUpload';
+import { Target, FileText, Tag, Calendar, ArrowLeft, Rocket, Wallet } from 'lucide-react';
 
 export default function CreateChallengePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, control, formState: { errors }, watch } = useForm<CreateChallengeData>();
 
-  // Watch start date to enforce end date constraints
   const startDate = watch('startDate');
 
   const onSubmit = async (data: CreateChallengeData) => {
@@ -20,27 +20,25 @@ export default function CreateChallengePage() {
       setIsLoading(true);
       
       const payload = {
-          ...data,
-          // If using standard datetime-local input, values are correctly formatted for API usually, 
-          // or ensure ISO conversion if needed. Backend accepts ISO strings.
-          goalType: 'boolean' as const, 
-          checkInFrequency: 'daily',
-          isPublic: true 
+        ...data,
+        goalType: 'boolean' as const, 
+        checkInFrequency: 'daily',
+        isPublic: true 
       };
 
       const response = await challengeApi.create(payload);
       
       if (response.success) {
-        toast.success('Challenge created successfully! 🚀');
+        toast.success('Challenge created successfully!');
         router.push('/dashboard');
       }
     } catch (err) {
       if (err && typeof err === 'object' && 'response' in err) {
-         const axiosError = err as { response?: { data?: { message?: string } } };
-         const errorMsg = axiosError.response?.data?.message || 'Failed to create challenge';
-         toast.error(errorMsg);
+        const axiosError = err as { response?: { data?: { message?: string } } };
+        const errorMsg = axiosError.response?.data?.message || 'Failed to create challenge';
+        toast.error(errorMsg);
       } else {
-         toast.error('Failed to create challenge');
+        toast.error('Failed to create challenge');
       }
     } finally {
       setIsLoading(false);
@@ -48,135 +46,180 @@ export default function CreateChallengePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl w-full mx-auto space-y-8 bg-white p-8 rounded-lg shadow">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            Create New Challenge
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-              commit to a goal and track your progress.
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          
-          {/* Cover Image Upload */}
-          <Controller
-            control={control}
-            name="coverImage"
-            render={({ field: { onChange, value } }) => (
-              <ImageUpload 
-                onChange={onChange} 
-                value={value as File} 
-                label="Challenge Cover Image (Optional)" 
-              />
-            )}
-          />
+    <div className="min-h-screen bg-[#0a0a1a]">
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[64px_64px]" />
+      </div>
 
-          <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+      <div className="relative z-10 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl w-full mx-auto">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <Target className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-extrabold text-white">
+                Create New Challenge
+              </h2>
+              <p className="mt-2 text-white/50">
+                Commit to a goal and track your progress.
+              </p>
+            </div>
             
-            <div className="sm:col-span-6">
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
-              <div className="mt-1">
-                <input
-                  id="title"
-                  type="text"
-                  required
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                  placeholder="e.g., 30 Days of Coding"
-                  {...register('title', { required: 'Title is required' })}
-                />
-                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message as string}</p>}
-              </div>
-            </div>
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              
+              {/* Cover Image Upload */}
+              <Controller
+                control={control}
+                name="coverImage"
+                render={({ field: { onChange, value } }) => (
+                  <ImageUpload 
+                    onChange={onChange} 
+                    value={value as File} 
+                    label="Challenge Cover Image (Optional)" 
+                  />
+                )}
+              />
 
-            <div className="sm:col-span-6">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-              <div className="mt-1">
-                <textarea
-                  id="description"
-                  rows={4}
-                  required
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                  placeholder="Describe your challenge..."
-                  {...register('description', { required: 'Description is required' })}
-                />
-                {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message as string}</p>}
-              </div>
-            </div>
+              <div className="space-y-5">
+                
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    Title
+                  </label>
+                  <input
+                    id="title"
+                    type="text"
+                    required
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                    placeholder="e.g., 30 Days of Coding"
+                    {...register('title', { required: 'Title is required' })}
+                  />
+                  {errors.title && <p className="text-red-400 text-xs mt-2">{errors.title.message as string}</p>}
+                </div>
 
-            <div className="sm:col-span-3">
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-              <div className="mt-1">
-                <select
-                  id="category"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                  {...register('category', { required: true })}
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    rows={4}
+                    required
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                    placeholder="Describe your challenge..."
+                    {...register('description', { required: 'Description is required' })}
+                  />
+                  {errors.description && <p className="text-red-400 text-xs mt-2">{errors.description.message as string}</p>}
+                </div>
+
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                    <Tag className="w-4 h-4" />
+                    Category
+                  </label>
+                  <select
+                    id="category"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                    {...register('category', { required: true })}
+                  >
+                    <option value="fitness" className="bg-[#0a0a1a]">Fitness</option>
+                    <option value="health" className="bg-[#0a0a1a]">Health</option>
+                    <option value="learning" className="bg-[#0a0a1a]">Learning</option>
+                    <option value="productivity" className="bg-[#0a0a1a]">Productivity</option>
+                    <option value="habits" className="bg-[#0a0a1a]">Habits</option>
+                    <option value="finance" className="bg-[#0a0a1a]">Finance</option>
+                    <option value="custom" className="bg-[#0a0a1a]">Custom</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-5">
+                  <div>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      id="startDate"
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      {...register('startDate', { required: 'Start date is required' })}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="endDate" className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      id="endDate"
+                      required
+                      min={startDate ? String(startDate) : undefined}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      {...register('endDate', { required: 'End date is required' })}
+                    />
+                  </div>
+
+                  {/* Pledge Amount */}
+                  <div className="col-span-2 pt-4 border-t border-white/10">
+                    <label htmlFor="pledge" className="block text-sm font-medium text-white/70 mb-2 flex items-center gap-2">
+                       <Wallet className="w-4 h-4" />
+                       Commitment Stake (Optional)
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40">$</span>
+                      <input
+                        id="pledge"
+                        type="number"
+                        min="0"
+                        step="5"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                        placeholder="0.00"
+                        {...register('deposit.amount', { valueAsNumber: true })}
+                      />
+                      <input type="hidden" {...register('deposit.currency')} value="USD" />
+                    </div>
+                    <p className="text-xs text-white/40 mt-2">
+                       Stake money on your goal. If you fail, it goes to charity.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  className="flex-1 px-4 py-3 border border-white/10 rounded-xl font-medium text-white/70 hover:bg-white/5 transition flex items-center justify-center gap-2"
                 >
-                  <option value="fitness">Fitness</option>
-                  <option value="health">Health</option>
-                  <option value="learning">Learning</option>
-                  <option value="productivity">Productivity</option>
-                  <option value="habits">Habits</option>
-                  <option value="finance">Finance</option>
-                  <option value="custom">Custom</option>
-                </select>
+                  <ArrowLeft className="w-4 h-4" />
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 bg-linear-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-400 hover:to-purple-500 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Rocket className="w-5 h-5" />
+                      Create Challenge
+                    </>
+                  )}
+                </button>
               </div>
-            </div>
-
-            <div className="sm:col-span-3">
-               {/* Spacer or another field */}
-            </div>
-
-            <div className="sm:col-span-3">
-              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
-              <div className="mt-1">
-                <input
-                  type="date"
-                  id="startDate"
-                  required
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                  {...register('startDate', { required: 'Start date is required' })}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">End Date</label>
-              <div className="mt-1">
-                <input
-                  type="date"
-                  id="endDate"
-                  required
-                  min={startDate ? String(startDate) : undefined}
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                  {...register('endDate', { required: 'End date is required' })}
-                />
-              </div>
-            </div>
-
+            </form>
           </div>
-
-          <div className="pt-5">
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-              >
-                {isLoading ? 'Creating...' : 'Create Challenge'}
-              </button>
-            </div>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );

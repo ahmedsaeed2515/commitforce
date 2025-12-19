@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { StoreHydration } from "@/components/StoreHydration";
 import { ToastProvider } from "@/components/ToastProvider";
 import Navbar from '@/components/Navbar';
 import BadgeNotificationListener from '@/components/BadgeNotificationListener';
+import ScrollToTop from '@/components/ui/ScrollToTop';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
   title: "CommitForce - Put Your Money Where Your Goals Are",
-  description: "Professional Challenge Commitment Platform",
+  description: "Professional Challenge Commitment Platform with AI Verification",
+  keywords: ["accountability", "goals", "challenges", "habits", "streak"],
+  authors: [{ name: "CommitForce Team" }],
 };
 
 export default function RootLayout({
@@ -29,14 +27,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} font-sans antialiased bg-[#0a0a1a] text-white`}
         suppressHydrationWarning
       >
         <StoreHydration />
         <ToastProvider />
         <BadgeNotificationListener />
         <Navbar />
-        {children}
+        <main className="relative z-10">
+          {children}
+        </main>
+        <ScrollToTop />
       </body>
     </html>
   );
